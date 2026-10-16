@@ -21,11 +21,6 @@ on:
         default: "3.0.4"
         required: true
         type: string
-      decrypted_youtube_url:
-        description: "Direct URL of the decrypted YouTube IPA"
-        default: ""
-        required: true
-        type: string
       bundle_id:
         description: "Modify the bundle ID"
         default: "com.google.ios.youtube"
@@ -148,11 +143,14 @@ jobs:
           wget --quiet "https://github.com/inoahdev/tbd/releases/download/2.2/tbd-mac" -O /usr/local/bin/tbd
           chmod +x /usr/local/bin/tbd
 
-      - name: Hash YT ipa url
+     
+      - name: Set private YouTube IPA URL
         run: |
-          URL_YT="$(jq -r '.inputs.decrypted_youtube_url' $GITHUB_EVENT_PATH)"
-          echo ::add-mask::$URL_YT
-          echo URL_YT=$URL_YT >> $GITHUB_ENV
+          echo "::add-mask::$YOUTUBE_IPA_URL"
+          printf 'URL_YT=%s\n' "$YOUTUBE_IPA_URL" >> "$GITHUB_ENV"
+        env:
+          YOUTUBE_IPA_URL: ${{ secrets.YOUTUBE_IPA_URL }}
+
 
       - name: Prepare YouTube iPA
         id: prepare_youtube
